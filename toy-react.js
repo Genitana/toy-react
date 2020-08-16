@@ -62,7 +62,25 @@ export class Component {
         this[RENDER_TO_DOM](this._range);
     }
 
-    
+    setState(newState){
+        if (this.state === null || typeof this.state !== "object") {
+            this.state = newState;
+            this.rerender();
+            return;
+        }
+        let merge = (oldState, newState) => {
+            for (const p in newState) {
+                if (oldState[p] === null || typeof oldState[p] !== "object"){
+                    oldState[p] = newState[p];
+                }else{
+                    merge(oldState[p], newState[p]);
+                }
+            }
+        }
+        merge(this.state, newState);
+        this.rerender();
+    }
+
     // es6的写法，会产生一个getter
     // 视频说，get root 是一个真实的render
     //root 是跟渲染相关的东西
