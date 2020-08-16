@@ -63,8 +63,17 @@ export class Component {
     }
 
     rerender(){
-        this._range.deleteContents();
-        this[RENDER_TO_DOM](this._range);
+        // 全空的range如果有相邻的range，会被吞进去，他被吞进了下一个range里，再插入的时候会被后面的range包含进去
+        //为了保证range不空，先插入，再删除，
+        let oldRange = this._range;
+
+        let range = document.createRange();
+        range.setStart(oldRange.startContainer, oldRange.startOffset);
+        range.setEnd(oldRange.startContainer, oldRange.startOffset);
+        this[RENDER_TO_DOM](range);
+       
+        oldRange.setStart(range.endContainer, range.endOffset);
+        oldRange.deleteContents();
     }
 
     setState(newState){
