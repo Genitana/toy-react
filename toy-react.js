@@ -62,6 +62,7 @@ export class Component {
         this[RENDER_TO_DOM](this._range);
     }
 
+    
     // es6的写法，会产生一个getter
     // 视频说，get root 是一个真实的render
     //root 是跟渲染相关的东西
