@@ -9,7 +9,12 @@ class ElementWrapper {
             // RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()  确保第一个字母是小写字母开头的
             this.root.addEventListener(RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()), value);
         }else {
-            this.root.setAttribute(name, value);
+            // 处理className
+            if (name === "className") {
+                this.root.setAttribute("class", value);
+            }else {
+                this.root.setAttribute(name, value);
+            }
         }
     }
     appendChild(component){
@@ -119,6 +124,9 @@ export function createElement(type, attributes, ...children){
             if (typeof child === "string") {
                 // child = document.createTextNode(child);
                 child = new TextWrapper(child);
+            }
+            if ( child === null) {
+                continue;
             }
             if (typeof child === 'object' && child instanceof Array) {
                 insertChildren(child);

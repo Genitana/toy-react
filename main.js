@@ -1,46 +1,75 @@
-import {createElement,Component,render} from "./toy-react";
+import { createElement, Component, render } from "./toy-react";
 
-// for (let i of [1,2,3,4]) {
-//     console.log(i);
-// }
-
-class Mycomponent extends Component{
-    constructor(){
-        super();
-        this.state  = {
-            a:1,
-            b:2
-        }
+class Square extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: null,
+        };
     }
 
-    render(){
-        return <div>
-                <h1>my component</h1>
-                <button onclick={() => {this.setState({a: this.state.a +1});}}>add</button>
-                <span>{this.state.a.toString()}</span>
-                <div>{this.state.b.toString()}</div>
-                {this.children}
-            </div>
+    render() {
+        return (
+            <button
+                className="square"
+                onClick={() => this.setState({ value: 'X' })}
+            >
+                {this.state.value}
+            </button>
+        );
     }
 }
 
+class Board extends Component {
+    renderSquare(i) {
+        return <Square />;
+    }
 
+    render() {
+        const status = 'Next player: X';
 
-// window.a  = <div id='a' class="c">
-//      <div>abc</div>
-//      <div><div></div></div>
-//      <div></div>
-//     </div>
+        return (
+            <div>
+                <div className="status">{status}</div>
+                <div className="board-row">
+                    {this.renderSquare(0)}
+                    {this.renderSquare(1)}
+                    {this.renderSquare(2)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(3)}
+                    {this.renderSquare(4)}
+                    {this.renderSquare(5)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(6)}
+                    {this.renderSquare(7)}
+                    {this.renderSquare(8)}
+                </div>
+            </div>
+        );
+    }
+}
 
-// document.body.appendChild ( 
-//    <div id='a' class="c">
-//      <div>abc</div>
-//      <div><div></div></div>
-//      <div></div>
-//     </div>);
+class Game extends Component {
+    render() {
+        return (
+            <div className="game">
+                <div className="game-board">
+                    <Board />
+                </div>
+                <div className="game-info">
+                    <div>{/* status */}</div>
+                    <ol>{/* TODO */}</ol>
+                </div>
+            </div>
+        );
+    }
+}
 
-render(<Mycomponent id='a' class="c">
-     <div>abc</div>
-     <div></div>
-     <div></div>
-    </Mycomponent>, document.body);
+// ========================================
+
+render(
+    <Game />,
+    document.getElementById('root')
+);
