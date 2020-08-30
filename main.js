@@ -29,6 +29,10 @@ class Mycomponent extends Component{
 //      <div></div>
 //     </div>);
 
+
+/**
+ * 这个里面的标签和组件会被插件转为调用createElement()方法
+ */
 render(<Mycomponent id='a' class="c">
      <div>abc</div>
      <div></div>

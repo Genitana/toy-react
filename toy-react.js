@@ -1,5 +1,6 @@
 class ElementWrapper {
     constructor(type){
+        //root 存储的是实体的DOM
         this.root = document.createElement(type);
     }
     setAttribute(name,value){
@@ -19,6 +20,7 @@ class TextWrapper {
 
 export class Component {
     constructor(){
+        // 用Object.create(null);创建绝对空的一个对象
         this.props = Object.create(null);
         this.children = [];
         this._root = null;
@@ -31,11 +33,12 @@ export class Component {
     }
 
     // es6的写法，会产生一个getter
+    // get  root 是一个真实的渲染过程
     // 视频说，get root 是一个真实的render
     get root(){
         if (!this._root) {
-            // 不太懂，待理解
-            // 如果render出的还是component，就会发递归，一直到它变成ElementWrapper或TextWrapper，有根节点的这样一个component
+            // 组件里面都有render()方法
+            // 如果render出的还是component，去执行.root的时候就会发递归，一直到它变成ElementWrapper或TextWrapper
             this._root = this.render().root;
         }
         return this._root;
@@ -44,16 +47,18 @@ export class Component {
 
 /**
  * 
- * @param {*} type 
+ * @param {*} type  标签(例如“div”)或者组件
  * @param {*} attributes 属性列表，是一个object,例如{ id: "a", "class": "c"}
  * @param  {...any} children 子节点
  */
 export function createElement(type, attributes, ...children){
     let  e;
-    if (typeof type === "string"){
+    // 是标签
+    if (typeof type === "string"){  
         // e = document.createElement(type);
         e = new ElementWrapper(type);
-    }else{
+    }else{  
+        // 是组件
         e = new type;
     }
 
@@ -61,6 +66,7 @@ export function createElement(type, attributes, ...children){
         e.setAttribute(p, attributes[p]);
     }
 
+    //处理component里面的children
     let insertChildren = (children) => {
 
         for (let child of children) {
@@ -79,6 +85,11 @@ export function createElement(type, attributes, ...children){
     return e;
 }
 
+/**
+ * @param {*} parentElement  父节点DOM，React的示例中这里传的都是 document.getElementById("root")
+ */
 export function render(component, parentElement) {
+    
+    // 这里的component.root就会执行 class Component里的 get root() 方法
     parentElement.appendChild(component.root);
 }
