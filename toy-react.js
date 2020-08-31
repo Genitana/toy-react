@@ -4,7 +4,7 @@ class ElementWrapper {
         this.root = document.createElement(type);
     }
     setAttribute(name,value){
-        // [\s\S]表示所有的字符 
+        // [\s\S]表示所有的字符 ,以on开头的取出来，绑定事件
         if(name.match(/^on([\s\S]+)$/)){
             // RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()  确保第一个字母是小写字母开头的
             this.root.addEventListener(RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()), value);
@@ -17,11 +17,13 @@ class ElementWrapper {
         range.setStart(this.root, this.root.childNodes.length);
         range.setEnd(this.root, this.root.childNodes.length);
         component[RENDER_TO_DOM](range);
-        // this.root.appendChild(component.root);
+        // this.root.appendChild(component.root);  //?? 为什么不能用这种形式了？
     }
 
     [RENDER_TO_DOM](range) {
+        // 先把里面内容删掉
         range.deleteContents();
+        // 然后插入新内容
         range.insertNode(this.root);
     }
 }
@@ -52,8 +54,20 @@ export class Component {
         this.children.push(component);
     }
 
+    // 思想要发生一个变化，我们从取一个元素变成了把它渲染进一个range里
+
+    /**
+     * 这个[RENDER_TO_DOM](range)方法里的 this.render() 可能会返回组件或者ElementWrapper或者TextWrapper，
+     * 但是经过递归，最终都会返回ElementWrapper或者TextWrapper，而调用这两个Wrapper里面[RENDER_TO_DOM](range)方法就是在重新渲染
+     *
+     * 真正的渲染是在ElementWrapper和TextWrapper里的[RENDER_TO_DOM](range)方法
+     */
+
+    //这里要给它传一个位置
+    // DOM API 里面，什么API是跟位置对应的呢？答案是Range API
     [RENDER_TO_DOM](range) {
         this._range = range;
+        //递归调用
         this.render()[RENDER_TO_DOM](range);
     }
 
